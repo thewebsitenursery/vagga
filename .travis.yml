@@ -1,20 +1,27 @@
 sudo: required
-dist: trusty
+dist: xenial
+language: rust
 install:
-- "curl http://files.zerogw.com/vagga/vagga-install-testing.sh | sh"
-- "echo ubuntu-mirror: http://mirrors.us.kernel.org/ubuntu/ > ~/.vagga.yaml"
-- "echo alpine-mirror: http://mirrors.gigenet.com/alpinelinux/ >> ~/.vagga.yaml"
-- vagga make
-- "[[ -n $TEST_CASES ]] && vagga _build test"
+- "echo ubuntu-mirror: $UBUNTU_MIRROR > ~/.vagga.yaml"
+- "echo alpine-mirror: $ALPINE_MIRROR >> ~/.vagga.yaml"
+- "apt-get install musl-tools"
+- "rustup target add x86_64-unknown-linux-musl"
+- "[[ -n $TEST_CASES ]] && cargo build --target x86_64-unknown-linux-musl && cp ./target/x86_64-unknown-linux-musl/debug/vagga ."
+- "[[ -n $TEST_CASES ]] && ./vagga _build test"
 env:
-- TEST_CASES=
-- TEST_CASES=tests/alpine.bats
-- TEST_CASES="tests/ubuntu.bats tests/ubuntu_release.bats"
-- TEST_CASES=tests/npm.bats
-- TEST_CASES=tests/pip.bats
-- TEST_CASES=tests/gem_bundler.bats
-- TEST_CASES=tests/composer.bats
-- TEST_CASES="tests/badcmd.bats tests/completion.bats tests/copy.bats tests/generic.bats tests/image.bats tests/inheritance.bats tests/prerequisites.bats tests/readonly.bats tests/uidmap.bats tests/vcs.bats tests/version.bats"
+  global:
+  - UBUNTU_MIRROR=http://mirrors.us.kernel.org/ubuntu/
+  - ALPINE_MIRROR=http://mirrors.gigenet.com/alpinelinux/
+  - VAGGA_VERSION=$(git describe)
+  matrix:
+    - TEST_CASES=
+    - TEST_CASES=tests/alpine.bats
+    - TEST_CASES="tests/ubuntu.bats tests/ubuntu_release.bats"
+    - TEST_CASES=tests/npm.bats
+    - TEST_CASES=tests/pip.bats
+    - TEST_CASES=tests/gem_bundler.bats
+    - TEST_CASES=tests/composer.bats
+    - TEST_CASES="tests/badcmd.bats tests/completion.bats tests/copy.bats tests/generic.bats tests/image.bats tests/inheritance.bats tests/prerequisites.bats tests/readonly.bats tests/uidmap.bats tests/vcs.bats tests/version.bats"
 script:
-- "[[ -z $TEST_CASES ]] && vagga -E VAGGA_VERSION=v0.0.0-test _run rust-musl cargo test"
-- "[[ -n $TEST_CASES ]] && vagga -E UBUNTU_MIRROR=http://mirrors.us.kernel.org/ubuntu/ test tests --tap $TEST_CASES"
+- "[[ -z $TEST_CASES ]] && cargo test"
+- "[[ -n $TEST_CASES ]] && ./vagga -eUBUNTU_MIRROR -eALPINE_MIRROR test --tap $TEST_CASES"
