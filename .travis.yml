@@ -5,7 +5,16 @@ install:
 - "echo ubuntu-mirror: http://mirrors.us.kernel.org/ubuntu/ > ~/.vagga.yaml"
 - "echo alpine-mirror: http://mirrors.gigenet.com/alpinelinux/ >> ~/.vagga.yaml"
 - vagga make
-- vagga _build test
+- "[[ -n $TEST_CASES ]] && vagga _build test"
+env:
+- TEST_CASES=
+- TEST_CASES=tests/alpine.bats
+- TEST_CASES="tests/ubuntu.bats tests/ubuntu_release.bats"
+- TEST_CASES=tests/npm.bats
+- TEST_CASES=tests/pip.bats
+- TEST_CASES=tests/gem_bundler.bats
+- TEST_CASES=tests/composer.bats
+- TEST_CASES="tests/badcmd.bats tests/completion.bats tests/copy.bats tests/generic.bats tests/image.bats tests/inheritance.bats tests/prerequisites.bats tests/readonly.bats tests/uidmap.bats tests/vcs.bats tests/version.bats"
 script:
-- "vagga -E VAGGA_VERSION=v0.0.0-test _run rust-musl cargo test"
-- "vagga -E UBUNTU_MIRROR=http://mirrors.us.kernel.org/ubuntu/ test tests --tap"
+- "[[ -z $TEST_CASES ]] && vagga -E VAGGA_VERSION=v0.0.0-test _run rust-musl cargo test"
+- "[[ -n $TEST_CASES ]] && vagga -E UBUNTU_MIRROR=http://mirrors.us.kernel.org/ubuntu/ test tests --tap $TEST_CASES"
