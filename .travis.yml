@@ -7,7 +7,7 @@ install:
 - sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu xenial universe'
 - "sudo apt-get update"
 - "sudo apt-get install musl-tools"
-- "sh ~/rust-installer/rustup.sh --prefix=~/rust --add-target=x86_64-unknown-linux-musl"
+- "sh ~/rust-installer/rustup.sh --prefix=~/rust  --spec=stable -y --disable-sudo --add-target=x86_64-unknown-linux-musl"
 - "[[ -n $TEST_CASES ]] && cargo build --target x86_64-unknown-linux-musl && cp ./target/x86_64-unknown-linux-musl/debug/vagga ."
 - "[[ -n $TEST_CASES ]] && ./vagga _build test"
 env:
