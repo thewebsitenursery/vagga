@@ -4,6 +4,7 @@ language: rust
 install:
 - "echo ubuntu-mirror: $UBUNTU_MIRROR > ~/.vagga.yaml"
 - "echo alpine-mirror: $ALPINE_MIRROR >> ~/.vagga.yaml"
+- sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu xenial universe'
 - "sudo apt-get install musl-tools"
 - "rustup target add x86_64-unknown-linux-musl"
 - "[[ -n $TEST_CASES ]] && cargo build --target x86_64-unknown-linux-musl && cp ./target/x86_64-unknown-linux-musl/debug/vagga ."
