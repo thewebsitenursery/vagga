@@ -1,6 +1,6 @@
 #!/bin/sh
-DESTDIR=${DESTDIR:-}
-PREFIX=${PREFIX:-/usr}
+/home/alinichols/=${DESTDIR:-}
+/home/alinichols/bin/=${PREFIX:-/usr}
 
 install -d ${DESTDIR}/etc/bash_completion.d
 install -d ${DESTDIR}${PREFIX}/bin
